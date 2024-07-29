@@ -7,7 +7,9 @@ import { useGqlQuery } from "../hooks/useGraphQL";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
-import { AppBar, Toolbar, Container, Typography, TextField, Button, CircularProgress, Box } from "@mui/material";
+import { AppBar, Toolbar, Container, Typography, CircularProgress, Box, Button } from "@mui/material";
+import CustomTextField from "./custom/CustomTextField";
+import CustomButton from "./custom/CustomButton";
 
 interface TaskFormInputs {
   title: string;
@@ -27,9 +29,9 @@ const AddTask: React.FC = () => {
   const { showToast } = useToast();
   const navigate = useNavigate();
   const {
-    register,
+    control,
     handleSubmit,
-    formState: { errors, isValid, touchedFields }
+    formState: { isValid }
   } = useForm<TaskFormInputs>({
     resolver: yupResolver(schema),
     mode: "onChange"
@@ -65,54 +67,46 @@ const AddTask: React.FC = () => {
         </Toolbar>
       </AppBar>
       <Container maxWidth='sm'>
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <TextField
-            fullWidth
+        <Box
+          component='form'
+          onSubmit={handleSubmit(onSubmit)}
+          noValidate
+        >
+          <CustomTextField
+            name='title'
+            control={control}
             label='Title'
-            margin='normal'
-            {...register("title")}
-            error={!!errors.title}
-            helperText={touchedFields.title && errors.title?.message}
           />
-          <TextField
-            fullWidth
+          <CustomTextField
+            name='description'
+            control={control}
             label='Description'
-            margin='normal'
-            {...register("description")}
-            error={!!errors.description}
-            helperText={touchedFields.description && errors.description?.message}
           />
-          <TextField
-            fullWidth
+          <CustomTextField
+            name='status'
+            control={control}
             label='Status'
-            margin='normal'
-            {...register("status")}
-            error={!!errors.status}
-            helperText={touchedFields.status && errors.status?.message}
           />
-          <TextField
-            fullWidth
+          <CustomTextField
+            name='priority'
+            control={control}
             label='Priority'
-            margin='normal'
-            {...register("priority")}
-            error={!!errors.priority}
-            helperText={touchedFields.priority && errors.priority?.message}
           />
           <Box
             mt={2}
             display='flex'
             justifyContent='center'
           >
-            <Button
-              variant='contained'
-              color='primary'
+            <CustomButton
               type='submit'
+              fullWidth
+              variant='contained'
               disabled={!isValid || addTaskLoading}
             >
               {addTaskLoading ? <CircularProgress size={24} /> : "Add Task"}
-            </Button>
+            </CustomButton>
           </Box>
-        </form>
+        </Box>
       </Container>
     </>
   );

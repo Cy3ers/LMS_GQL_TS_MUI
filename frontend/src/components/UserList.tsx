@@ -8,16 +8,17 @@ import {
   Toolbar,
   Typography,
   Container,
-  TextField,
-  Button,
   Box,
   List,
   ListItem,
   ListItemText,
-  IconButton
+  IconButton,
+  Button
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useNavigate } from "react-router-dom";
+import CustomTextField from "./custom/CustomTextField";
+import CustomButton from "./custom/CustomButton";
 
 interface UserFormInputs {
   username: string;
@@ -33,10 +34,10 @@ const schema = Yup.object().shape({
 
 const UserList: React.FC<UserListProps> = ({ users, addUser, removeUser }) => {
   const {
-    register,
+    control,
     handleSubmit,
     watch,
-    formState: { errors, isValid, touchedFields },
+    formState: { isValid },
     reset
   } = useForm<UserFormInputs>({
     resolver: yupResolver(schema),
@@ -82,39 +83,37 @@ const UserList: React.FC<UserListProps> = ({ users, addUser, removeUser }) => {
           >
             Add Users
           </Typography>
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <TextField
-              fullWidth
+          <Box
+            component='form'
+            onSubmit={handleSubmit(onSubmit)}
+            noValidate
+          >
+            <CustomTextField
+              name='username'
+              control={control}
               label='Username'
-              margin='normal'
-              {...register("username")}
-              error={!!errors.username}
-              helperText={touchedFields.username && errors.username?.message}
             />
-            <TextField
-              fullWidth
+            <CustomTextField
+              name='password'
+              control={control}
               label='Password'
               type='password'
-              margin='normal'
-              {...register("password")}
-              error={!!errors.password}
-              helperText={touchedFields.password && errors.password?.message}
             />
             <Box
               mt={2}
               display='flex'
               justifyContent='center'
             >
-              <Button
-                variant='contained'
-                color='primary'
+              <CustomButton
                 type='submit'
+                fullWidth
+                variant='contained'
                 disabled={!isValid}
               >
                 Add User
-              </Button>
+              </CustomButton>
             </Box>
-          </form>
+          </Box>
         </Box>
         <Box mt={4}>
           <Typography
@@ -123,11 +122,10 @@ const UserList: React.FC<UserListProps> = ({ users, addUser, removeUser }) => {
           >
             Search Users
           </Typography>
-          <TextField
-            fullWidth
+          <CustomTextField
+            name='search'
+            control={control}
             label='Search by username'
-            margin='normal'
-            {...register("search")}
           />
         </Box>
         <Box mt={4}>

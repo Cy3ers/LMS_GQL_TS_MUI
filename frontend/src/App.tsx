@@ -13,6 +13,7 @@ import { ErrorBoundary } from "react-error-boundary";
 import { RenderError } from "./components/errors/ErrorBoundaryComponent";
 import { ApolloProvider } from "@apollo/client";
 import client from "./config/apollo/apollo";
+import ThemeContextProvider from "./contexts/theme";
 
 const App: React.FC = () => {
   const routes: RouteObject[] = [
@@ -52,16 +53,18 @@ const App: React.FC = () => {
 
   return (
     <ApolloProvider client={client}>
-      <div className='App'>
-        <ErrorBoundary
-          FallbackComponent={RenderError}
-          onError={() => console.log("Some error caught!!")}
-        >
-          <ToastProvider>
-            <RouterProvider router={router} />
-          </ToastProvider>
-        </ErrorBoundary>
-      </div>
+      <ThemeContextProvider>
+        <div className='App'>
+          <ErrorBoundary
+            FallbackComponent={RenderError}
+            onError={() => console.log("Some error caught!!")}
+          >
+            <ToastProvider>
+              <RouterProvider router={router} />
+            </ToastProvider>
+          </ErrorBoundary>
+        </div>
+      </ThemeContextProvider>
     </ApolloProvider>
   );
 };
