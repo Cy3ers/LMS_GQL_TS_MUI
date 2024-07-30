@@ -33,8 +33,8 @@ export const DELETE_TASK = gql`
 `;
 
 export const REGISTER_USER = gql`
-  mutation register($username: String!, $password: String!) {
-    register(username: $username, password: $password) {
+  mutation register($username: String!, $password: String!, $role: String!) {
+    register(username: $username, password: $password, role: $role) {
       id
       username
     }

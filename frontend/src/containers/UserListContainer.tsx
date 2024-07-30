@@ -11,6 +11,7 @@ interface User {
   id?: string;
   username: string;
   password: string;
+  role: string;
 }
 
 const UserListContainer: React.FC = () => {
@@ -20,7 +21,7 @@ const UserListContainer: React.FC = () => {
     loading: allUsersLoading,
     save: addUserMutation,
     refetch: refetchAllUsers
-  } = useGqlQuery<{ users: User[] }, { username: string; password: string }>({
+  } = useGqlQuery<{ users: User[] }, { username: string; password: string; role: string }>({
     query: ALL_USERS,
     mutation: REGISTER_USER
   });
@@ -31,11 +32,12 @@ const UserListContainer: React.FC = () => {
     refetchAllUsers();
   }, [refetchAllUsers]);
 
-  const addUser = async (user: { username: string; password: string }) => {
+  const addUser = async (user: { username: string; password: string; role: string }) => {
     try {
       await addUserMutation({
         username: user.username,
-        password: user.password
+        password: user.password,
+        role: user.role
       });
       refetchAllUsers();
       showToast("User Added Successfully!");

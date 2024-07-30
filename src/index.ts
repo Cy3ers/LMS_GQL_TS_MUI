@@ -12,13 +12,31 @@ import typeDefs from "./graphql/schemas";
 import resolvers from "./graphql/resolvers";
 import { getUserFromToken, Context } from "./context/auth-context";
 import cors from "cors";
+import { applyMiddleware } from "graphql-middleware";
+import requireRole from "./middleware/authMiddleware";
+import { roles } from "./constants/roles";
 
 dotenv.config();
 
 const port = process.env.PORT || 4000;
 
+// Apply middleware to specific resolvers
+const permissions = {
+  Query: {
+    users: requireRole(roles.ADMIN)
+  },
+  Mutation: {
+    register: requireRole(roles.ADMIN),
+    deleteUser: requireRole(roles.ADMIN),
+    createTask: requireRole(roles.ADMIN),
+    updateTask: requireRole(roles.ADMIN),
+    deleteTask: requireRole(roles.ADMIN)
+  }
+};
+
 // Create executable schema
 const schema = makeExecutableSchema({ typeDefs, resolvers });
+const schemaWithMiddleware = applyMiddleware(schema, permissions);
 
 const startServer = async () => {
   // Create an Express application
@@ -37,7 +55,7 @@ const startServer = async () => {
   // Set up WebSocket server with GraphQL
   const serverCleanup = useServer(
     {
-      schema,
+      schema: schemaWithMiddleware,
       context: async (ctx) => {
         const token = (ctx.connectionParams?.authorization || "") as string;
         const user = await getUserFromToken(token);
@@ -49,7 +67,7 @@ const startServer = async () => {
 
   // Create Apollo Server instance
   const server = new ApolloServer<Context>({
-    schema,
+    schema: schemaWithMiddleware,
     plugins: [
       ApolloServerPluginDrainHttpServer({ httpServer }),
       {

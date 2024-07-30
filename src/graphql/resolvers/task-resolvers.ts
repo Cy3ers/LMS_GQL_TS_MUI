@@ -1,5 +1,6 @@
 import Task from "../../models/Task";
 import { PubSub } from "graphql-subscriptions";
+import { roles } from "../../constants/roles";
 
 const pubsub = new PubSub();
 
@@ -12,7 +13,7 @@ const taskResolvers = {
   },
   Mutation: {
     createTask: async (_: any, { title, description, status, priority }: any, { user }: any) => {
-      if (!user) throw new Error("Not authenticated.");
+      if (!user || user.role !== roles.ADMIN) throw new Error("Not authorized.");
       const newTask = await Task.create({ title, description, status, priority, userId: user.id });
       pubsub.publish("TASK_ADDED", {
         taskAdded: {
@@ -22,7 +23,7 @@ const taskResolvers = {
       return newTask;
     },
     updateTask: async (_: any, { id, title, description, status, priority }: any, { user }: any) => {
-      if (!user) throw new Error("Not authenticated.");
+      if (!user || user.role !== roles.ADMIN) throw new Error("Not authorized.");
 
       const task = await Task.findByPk(id);
       if (!task) throw new Error("Task not found.");
@@ -37,7 +38,7 @@ const taskResolvers = {
       return task;
     },
     deleteTask: async (_: any, { id }: any, { user }: any) => {
-      if (!user) throw new Error("Not authenticated.");
+      if (!user || user.role !== roles.ADMIN) throw new Error("Not authorized.");
 
       const task = await Task.findByPk(id);
       if (!task) throw new Error("Task not found.");

@@ -21,3 +21,13 @@ export const ALL_USERS = gql`
     }
   }
 `;
+
+export const GET_ME = gql`
+  query {
+    me {
+      id
+      username
+      role
+    }
+  }
+`;

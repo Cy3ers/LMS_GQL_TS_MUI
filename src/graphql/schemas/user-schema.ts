@@ -3,6 +3,7 @@ const userSchema = `
     id: ID!
     username: String!
     password: String!
+    role: String!
   }
 
   type AuthPayload {
@@ -16,7 +17,7 @@ const userSchema = `
   }
 
   type Mutation {
-    register(username: String!, password: String!): User!
+    register(username: String!, password: String!, role: String!): User!
     login(username: String!, password: String!): AuthPayload!
     changePassword(currentPassword: String!, newPassword: String!, confirmPassword: String!): Boolean!
     deleteUser(id: ID!): Boolean!

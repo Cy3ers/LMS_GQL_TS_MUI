@@ -6,6 +6,7 @@ class User extends Model {
   public id!: number;
   public username!: string;
   public password!: string;
+  public role!: string;
 
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
@@ -24,6 +25,10 @@ User.init(
       unique: true
     },
     password: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    role: {
       type: DataTypes.STRING,
       allowNull: false
     }

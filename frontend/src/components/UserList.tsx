@@ -19,16 +19,19 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { useNavigate } from "react-router-dom";
 import CustomTextField from "./custom/CustomTextField";
 import CustomButton from "./custom/CustomButton";
+import CustomSelect from "./custom/CustomSelect";
 
 interface UserFormInputs {
   username: string;
   password: string;
+  role: string;
   search?: string;
 }
 
 const schema = Yup.object().shape({
   username: Yup.string().required("Username is required"),
   password: Yup.string().required("Password is required"),
+  role: Yup.string().required("Role is required"),
   search: Yup.string()
 });
 
@@ -47,9 +50,14 @@ const UserList: React.FC<UserListProps> = ({ users, addUser, removeUser }) => {
   const navigate = useNavigate();
 
   const onSubmit: SubmitHandler<UserFormInputs> = (data) => {
-    addUser({ username: data.username, password: data.password });
+    addUser({ username: data.username, password: data.password, role: data.role });
     reset({ username: "", password: "", search: data.search });
   };
+
+  const roleOptions = [
+    { value: "admin", label: "Admin" },
+    { value: "user", label: "User" }
+  ];
 
   const searchQuery = watch("search", "");
 
@@ -98,6 +106,12 @@ const UserList: React.FC<UserListProps> = ({ users, addUser, removeUser }) => {
               control={control}
               label='Password'
               type='password'
+            />
+            <CustomSelect
+              name='role'
+              control={control}
+              label='Role'
+              options={roleOptions}
             />
             <Box
               mt={2}

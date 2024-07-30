@@ -16,6 +16,6 @@ export interface User {
 
 export interface UserListProps {
   users: User[];
-  addUser: (user: { username: string; password: string }) => void;
+  addUser: (user: { username: string; password: string; role: string }) => void;
   removeUser: (username: string) => void;
 }
